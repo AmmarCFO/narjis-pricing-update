@@ -6,7 +6,7 @@ import { BRANCHES } from './constants';
 import type { Branch, NewBooking, ApartmentStatus, Apartment } from './types';
 
 const App: React.FC = () => {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState('ar');
   const [branches, setBranches] = useState<Branch[]>(BRANCHES);
   const [view, setView] = useState<'dashboard' | 'pricing'>('pricing');
 

@@ -106,7 +106,7 @@ interface PricingDashboardProps {
   language?: 'en' | 'ar';
 }
 
-const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: initialLanguage = 'en' }) => {
+const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: initialLanguage = 'ar' }) => {
   const [language, setLanguage] = useState<'en' | 'ar'>(initialLanguage);
   const [villaFilter, setVillaFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -340,7 +340,7 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
       <main className="max-w-7xl mx-auto px-4 mt-8 space-y-8">
         
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <KpiCard label={t.vacantUnits} value={stats.vacantCount.toString()} isAr={isAr} />
           <KpiCard label={t.oldTotal} value={`SR ${stats.oldTotal.toLocaleString()}`} isAr={isAr} />
           <KpiCard label={t.newTotal} value={`SR ${stats.newTotal.toLocaleString()}`} isAr={isAr} />
@@ -353,8 +353,8 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
         </div>
 
         {/* Insight Banner */}
-        <div className="bg-[#CFE2F3] p-6 rounded-lg border border-[#0F8B8C]/20 shadow-sm">
-           <p className="text-center font-medium leading-relaxed">
+        <div className="bg-[#CFE2F3] p-4 md:p-6 rounded-lg border border-[#0F8B8C]/20 shadow-sm">
+           <p className={`text-center font-medium leading-relaxed text-sm md:text-base ${isAr ? 'text-right md:text-center' : 'text-left md:text-center'}`}>
              {t.insight.split(isAr ? '49,030' : 'SR 49,030').map((part, i, arr) => (
                <React.Fragment key={i}>
                  {part}
@@ -365,14 +365,14 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-[450px]">
-            <h3 className="text-lg font-bold mb-6 text-[#075F60]">{t.chartAdjust}</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[400px] md:h-[450px]">
+            <h3 className="text-base md:text-lg font-bold mb-4 md:mb-6 text-[#075F60]">{t.chartAdjust}</h3>
             <ResponsiveContainer width="100%" height="90%">
               <BarChart
                 data={chartData}
                 layout="vertical"
-                margin={{ top: 5, right: isAr ? 20 : 20, left: isAr ? 20 : 20, bottom: 5 }}
+                margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                 <XAxis type="number" reversed={isAr} hide />
@@ -380,34 +380,34 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                   dataKey="unit" 
                   type="category" 
                   orientation={isAr ? 'right' : 'left'} 
-                  width={60}
+                  width={50}
                   tick={{ fontSize: 10, fontWeight: 700, fill: '#333' }}
                 />
                 <Tooltip 
                   formatter={(value: any) => `SR ${value.toLocaleString()}`}
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
-                <Legend />
-                <Bar dataKey={t.oldPrice} fill="#cccccc" radius={isAr ? [4, 0, 0, 4] : [0, 4, 4, 0]} />
-                <Bar dataKey={t.newPrice} fill="#0F8B8C" radius={isAr ? [4, 0, 0, 4] : [0, 4, 4, 0]} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+                <Bar dataKey={t.oldPrice} fill="#cccccc" radius={isAr ? [4, 0, 0, 4] : [0, 4, 4, 0]} barSize={12} />
+                <Bar dataKey={t.newPrice} fill="#0F8B8C" radius={isAr ? [4, 0, 0, 4] : [0, 4, 4, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-[450px]">
-            <h3 className="text-lg font-bold text-[#075F60]">{t.chartBreakdown}</h3>
-            <p className="text-sm text-gray-500 mt-1 mb-6">
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[400px] md:h-[450px]">
+            <h3 className="text-base md:text-lg font-bold text-[#075F60]">{t.chartBreakdown}</h3>
+            <p className="text-xs md:text-sm text-gray-500 mt-1 mb-4 md:mb-6">
               {isAr ? 'كيف تتقسم الوحدات الـ 12 حسب ما فعلناه بأسعارها.' : 'How the 12 units break down by what we did to their prices.'}
             </p>
-            <ResponsiveContainer width="100%" height="90%">
+            <ResponsiveContainer width="100%" height="80%">
               <PieChart>
                 <Pie
                   data={pieData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={window.innerWidth < 768 ? 70 : 100}
                   dataKey="value"
-                  onClick={(data) => setReasonFilter(data.originalName)}
+                  onClick={(data: any) => setReasonFilter(data.originalName)}
                   cursor="pointer"
                   label={({ percent }: any) => `${(percent * 100).toFixed(0)}%`}
                 >
@@ -425,7 +425,7 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                   layout="horizontal" 
                   verticalAlign="bottom" 
                   align="center"
-                  wrapperStyle={{ paddingTop: '20px' }}
+                  wrapperStyle={{ paddingTop: '10px', fontSize: '11px' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -433,26 +433,26 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
         </div>
 
         {/* Data Table Filters */}
-        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-          <div className="flex flex-col md:flex-row gap-6 items-end justify-between">
-            <div className="flex flex-wrap gap-4 w-full md:w-auto">
-              <div className="space-y-1 w-full md:w-auto">
-                <label className="text-xs font-bold text-gray-500 uppercase">{t.searchUnit}</label>
+        <div className="bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200">
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.searchUnit}</label>
                 <input 
                   type="text"
                   placeholder={isAr ? 'مثال: 51-101' : 'e.g. 51-101'}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#0F8B8C] outline-none"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-[#0F8B8C] outline-none"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase">{t.villaFilter}</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.villaFilter}</label>
                 <div className="relative">
                   <select 
                     value={villaFilter}
                     onChange={(e) => setVillaFilter(e.target.value)}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-[#0F8B8C] outline-none min-w-[150px]"
+                    className="appearance-none w-full bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm focus:ring-2 focus:ring-[#0F8B8C] outline-none"
                   >
                     {villas.map(v => <option key={v} value={v}>{v === 'All' ? t.all : translateVilla(v)}</option>)}
                   </select>
@@ -460,12 +460,12 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase">{t.typeFilter}</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.typeFilter}</label>
                 <div className="relative">
                   <select 
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-[#0F8B8C] outline-none min-w-[150px]"
+                    className="appearance-none w-full bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm focus:ring-2 focus:ring-[#0F8B8C] outline-none"
                   >
                     {types.map(t_val => <option key={t_val} value={t_val}>{t_val === 'All' ? t.all : translateType(t_val)}</option>)}
                   </select>
@@ -473,12 +473,12 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase">{t.reasonFilter}</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.reasonFilter}</label>
                 <div className="relative">
                   <select 
                     value={reasonFilter}
                     onChange={(e) => setReasonFilter(e.target.value)}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-[#0F8B8C] outline-none min-w-[200px]"
+                    className="appearance-none w-full bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm focus:ring-2 focus:ring-[#0F8B8C] outline-none hover:border-[#0F8B8C] cursor-pointer"
                   >
                     {categories.map(c => <option key={c} value={c}>{c === 'All' ? t.all : translateCategory(c)}</option>)}
                   </select>
@@ -487,22 +487,22 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
               </div>
             </div>
             
-            <div className={`flex flex-col items-end gap-2 ${isAr ? 'items-start' : 'items-end'}`}>
+            <div className={`flex items-center justify-between mt-2`}>
               <button 
                 onClick={() => { setVillaFilter('All'); setTypeFilter('All'); setReasonFilter('All'); setSearchTerm(''); }}
                 className="text-xs font-bold text-[#0F8B8C] hover:underline"
               >
                 {t.reset}
               </button>
-              <div className="text-sm font-medium text-[#595959]">
+              <div className="text-xs font-medium text-gray-400">
                 {t.showing(filteredData.length, PRICING_DATA.length)}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Data Table */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        {/* Main Data Table - Desktop */}
+        <div className="hidden md:block bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
             <table className="w-full text-left border-collapse" dir={isAr ? 'rtl' : 'ltr'}>
               <thead className="sticky top-0 bg-[#075F60] text-white z-10">
@@ -527,9 +527,9 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                     <td className="px-6 py-4 font-bold border-b border-black/5">{row.unit}</td>
                     <td className="px-6 py-4 border-b border-black/5">{translateType(row.type)}</td>
                     <td className="px-6 py-4 border-b border-black/5">{translateVilla(row.villa)}</td>
-                    <td className="px-6 py-4 border-b border-black/5">SR {row.oldPrice.toLocaleString()}</td>
-                    <td className="px-6 py-4 border-b border-black/5 font-bold">SR {row.newPrice.toLocaleString()}</td>
-                    <td className={`px-6 py-4 border-b border-black/5 ${row.change < 0 ? 'text-red-700 font-bold' : ''}`}>
+                    <td className="px-6 py-4 border-b border-black/5 whitespace-nowrap">SR {row.oldPrice.toLocaleString()}</td>
+                    <td className="px-6 py-4 border-b border-black/5 font-bold whitespace-nowrap">SR {row.newPrice.toLocaleString()}</td>
+                    <td className={`px-6 py-4 border-b border-black/5 whitespace-nowrap ${row.change < 0 ? 'text-red-700 font-bold' : ''}`}>
                       {row.change !== 0 ? `SR ${row.change.toLocaleString()}` : '-'}
                     </td>
                     <td className={`px-6 py-4 border-b border-black/5 ${row.percentChange < 0 ? 'text-red-700 font-bold' : ''}`}>
@@ -551,6 +551,67 @@ const PricingDashboard: React.FC<PricingDashboardProps> = ({ onBack, language: i
                 </tr>
               </tfoot>
             </table>
+          </div>
+        </div>
+
+        {/* Mobile View Card List */}
+        <div className="md:hidden space-y-4">
+          {filteredData.map((row) => (
+            <div 
+              key={row.unit}
+              className="p-4 rounded-xl shadow-sm border border-black/5 space-y-3"
+              style={{ backgroundColor: CATEGORY_COLORS[row.reasonCategory] }}
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider">{t.unit}</p>
+                  <p className="font-bold text-lg">{row.unit}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider">{t.villa}</p>
+                  <p className="text-xs font-bold">{translateVilla(row.villa)}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-black/5">
+                <div>
+                  <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider">{t.oldPrice}</p>
+                  <p className="text-sm line-through opacity-60">SR {row.oldPrice.toLocaleString()}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold text-[#075F60] uppercase tracking-wider">{t.newPrice}</p>
+                  <p className="text-base font-bold text-[#075F60]">SR {row.newPrice.toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center bg-white/30 p-2 rounded-lg">
+                <div className="flex items-center gap-2">
+                   <span className="text-xs font-bold text-red-700">{row.percentChange}%</span>
+                   <span className="text-[10px] text-gray-500">{t.change}</span>
+                </div>
+                <div className="text-right text-xs font-bold text-gray-700">
+                  {translateType(row.type)}
+                </div>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-1">{t.reason}</p>
+                <p className="text-xs leading-relaxed italic">{translateReason(row.reason)}</p>
+              </div>
+            </div>
+          ))}
+          
+          {/* Mobile Footer Stats */}
+          <div className="bg-[#075F60] text-white p-6 rounded-xl shadow-lg space-y-4">
+             <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                <span className="text-sm font-medium opacity-80">{t.newTotal}</span>
+                <span className="text-xl font-bold">SR {stats.newTotal.toLocaleString()}</span>
+             </div>
+             <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                <span className="text-sm font-medium opacity-80">{isAr ? 'إجمالي الخصم' : 'Total Discount'}</span>
+                <span className="text-lg font-bold text-red-300">-SR {(stats.oldTotal - stats.newTotal).toLocaleString()}</span>
+             </div>
+             <div className="flex justify-between items-center">
+                <span className="text-sm font-medium opacity-80">{t.avgDiscount}</span>
+                <span className="text-lg font-bold text-red-300">-{stats.avgDiscount.toFixed(1)}%</span>
+             </div>
           </div>
         </div>
 
